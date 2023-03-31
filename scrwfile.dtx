@@ -1,0 +1,1136 @@
+% \iffalse^^A meta-comment
+% ======================================================================
+% scrwfile.dtx
+% Copyright (c) Markus Kohm, 2010-2023
+%
+% From version 0.1 2010/10/01 up to version 0.1.11 2022/10/06
+% this work was part of KOMA-Script v3.14 2014/10/28 up to
+% KOMA-Script v3.38 2022/10/12.
+%
+% Since version 0.1.99 2023/04/01 it has been removed from
+% KOMA-Script and has become a standalone package.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License, version 1.3c of the license.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 and of this work.
+%
+% This work has the LPPL maintenance status "unmaintained".
+%
+% The current author of this work is Markus Kohm.
+%
+% This work consists of the files `scrwfile.dtx' and `README.md'.
+%
+% For repository, issues etc. see:
+% <https://github.com/komascript/scrwfile>.
+%
+% Earlier versions of this work can be found in the KOMA-Script
+% repository on SourceForge, see:
+% <https://sourceforge.net/p/koma-script/code/>.
+% ======================================================================
+%%% From File: $Id: scrwfile.dtx 4018 2023-03-31 07:31:04Z kohm $
+%<*dtx>
+\ifx\ProvidesFile\undefined\def\ProvidesFile#1[#2]{}\fi
+\ProvidesFile{scrwfile.dtx}
+%</dtx>
+%<package|driver>\NeedsTeXFormat{LaTeX2e}[1995/06/01]
+%<package>\ProvidesPackage{scrwfile}
+%<driver>\ProvidesFile{scrwfile.drv}
+%<*dtx|package|driver>
+  [2023-03-31 v0.1.99 KOMA-Script package (write and clone files)]
+%</dtx|package|driver>
+%<*dtx>
+\ifx\documentclass\undefined
+  \input docstrip.tex
+  \generate{\usepreamble\defaultpreamble
+    \file{scrwfile.sty}{%
+      \from{scrwfile.dtx}{package}%
+    }%
+  }
+\else
+  \let\endbatchfile\relax
+\fi
+\endbatchfile
+%</dtx>
+%<*driver>
+\documentclass[USenglish,ngerman]{koma-script-source-doc}
+\usepackage[main=USenglish]{babel}
+\usepackage{hvlogos}
+\usepackage{listings}
+\setcounter{StandardModuleDepth}{2}
+\let\Macro\cs
+\let\Package\pkg
+\let\PName\meta
+\newcommand*{\PParameter}[1]{{\ttfamily\char`\{\mbox{#1}\char`\}}}
+\let\File\file
+\let\IndexCmd\SpecialMacroIndex
+\newcommand*{\seclabel}[1]{\label{sec-\languagename:scrwfile.#1}}
+\newcommand*{\textnote}[1]{}
+\let\important\textnote
+\newcommand*{\PValue}[1]{{\ttfamily\mbox{#1}}}
+\newenvironment{Example}{%
+  \setkomafont{labelinglabel}{\sffamily\bfseries}%
+  \labeling{\examplename:}
+  \item[\examplename:]
+}{\endlabeling}
+\newcaptionname{USenglish}{\examplename}{Example}
+\newcaptionname{ngerman}{\examplename}{Beispiel}
+\renewcaptionname{USenglish}{\contentsname}{Contents\,/\,Inhalt}
+\lstnewenvironment{lstcode}[1][]{%
+  \lstset{language=[LaTeX]TeX,basicstyle=\ttfamily\small,%
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    breaklines,prebreak=\mbox{$\hookleftarrow$},%
+    moretexcs={TOCclone,addxcontentsline,contentsname},
+    literate=%
+      {Ö}{{\"O}}1
+      {Ä}{{\"A}}1
+      {Ü}{{\"U}}1
+      {ß}{{\ss}}1
+      {ü}{{\"u}}1
+      {ä}{{\"a}}1
+      {ö}{{\"o}}1,
+    #1}%
+}{}
+\lstnewenvironment{lstoutput}[1][]{%
+  \lstset{basicstyle=\ttfamily\small,%
+    breaklines,prebreak=\mbox{$\hookleftarrow$},
+    #1}%
+}{}%
+\DeclareTOCStyleEntry[beforeskip=0pt,numwidth=2em,entryformat=\textsf]{section}{section}
+\begin{document}
+\DocInput{scrwfile.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v0.1}{2010/10/01}{start of new package}
+% \changes{v0.1.7}{2014/10/13}{manual moved to \KOMAScript{} manual}
+% \changes{v0.1.9}{2021/05/30}{version number scheme changed}
+% \changes{v0.1.10}{2022/02/05}{switch over from \cls*{scrdoc} to
+%   \cls*{koma-script-source-doc}}
+% \changes{v0.1.99}{2023/04/01}{\KOMAScript{} spin-off}
+%
+% \GetFileInfo{scrwfile.dtx}
+% \title{%
+%   Saving Write Handles with the Experimental Package
+%   \pkg{scrwfile}\\\medskip
+%   \foreignlanguage{ngerman}{Write-Handles sparen mit dem experimentellen
+%     Paket \pkg{scrwfile}}%
+% }
+% \author{\href{mailto:komascript@gmx.info}{Markus Kohm}}
+% \date{Version \fileversion{} \filedate}
+% \maketitle
+% \begin{abstract}
+% The \TeX{} engines \TeX, \pdfTeX, and \XeTeX{} (but not \LuaTeX) do
+% provide only 16 handles for simultaneously write open files. Some of them
+% are already used by \LaTeX. Moreover, for every file using
+% \cs{@starttoc} \LaTeX{} keeps a write file open from usage of
+% \cs{@starttoc}, e.g., inside \cs{tableofcontents}, \cs{listoffigures}
+% etc., until the end of the document. Additional write files are used for
+% the index, glossary etc. So sometimes it happens, that there are not
+% enough handles to open another one. \pkg*{scrwfile} was made to change the
+% \LaTeX{} internal handling of all the helper files bases on \cs{@starttoc}
+% to not keep them open simultaneously, but use only one file handle for all
+% of them. So you should almost never run out of write file handles.
+% \end{abstract}
+% \foreignlanguage{ngerman}{%
+% \begin{abstract}
+%   Die \TeX-Engines \TeX, \pdfTeX und \XeTeX{} (nicht jedoch \LuaTeX) bieten
+%   lediglich 16 Handles, die gleichzeitig zum Schreiben geöffnet sind. Einige
+%   davon werden bereits von \LaTeX{} selbst benötigt. Darüber hinaus hält
+%   \LaTeX{} jede Datei, die per \cs{@starttoc} geöffnet wird, vom verwendeten
+%   \cs{@starttoc} bis zum Ende des Dokuments zum Schreiben offen. Das
+%   betrifft beispielsweise \cs{tableofcontents}, \cs{listoffigure}
+%   etc. Weitere Dateien werden gegebenenfalls für Index, Glossar und ähnliche
+%   Verzeichnisse benötigt. Daher kann es manchmal geschehen, dass keine
+%   weitere Datei mehr zum Schreiben geöffnet werden kann. \pkg*{scrwfile}
+%   wurde entwickelt, um \LaTeX-Interna bei der Verwendung von \cs{@starttoc}
+%   so abzuändern, dass nicht mehr alle Dateien gleichzeitig offen bleiben
+%   müssen. Stattdessen wird nur noch ein Handle für all diese Dateien
+%   benötigt. Damit sollte der Fall, dass keine weiteren Dateien zum Schreiben
+%   geöffnet werden können, kaum noch auftreten.%
+% \end{abstract}
+% }
+%
+% \tableofcontents
+%
+% \part{English User Manual}
+%
+% \noindent\textbf{This is an experimental package. Usage of this package is
+%   on your own risk. There is no support, if you are using this package, not
+%   only for this package but also for the class you are using or other
+%   packages, that use \cs{@starttoc} or \cs{@writefile} like \pkg{caption},
+%   \pkg{float}, \pkg{tocbasic}, \pkg{listings} and many more.}
+%
+% \section{Background}
+%\iffalse^^A
+%<*docen>
+%\fi^^A
+
+One of the problems not solved by the introduction of \eTeX{} is the fact that
+\TeX{} can support only 18 open write handles. This number seems quite large
+at first, but many of these handles are already reserved. \TeX{} itself uses
+handle 0 for the log file. \LaTeX{} needs handle 1 for \cs{@mainaux},
+handle 2 for \Macro{@partaux}, one handle for \Macro{tableofcontents}, one
+handle for \Macro{listoffigures}, one handle for \Macro{listoftables}, and one
+handle for \Macro{makeindex}. Every other such list generates another handle,
+and packages like \Package{hyperref} or \Package{minitoc} require write
+handles too.
+
+The bottom line is that eventually you may get the following error message:
+\begin{lstoutput}
+  ! No room for a new \write .
+  \ch@ck ...\else \errmessage {No room for a new #3}
+                                                    \fi
+\end{lstoutput}
+
+For some time, the simplest solution to this problem has been to use
+\mbox{\LuaLaTeX} instead of \mbox{pdf\LaTeX} or \XeLaTeX. This eliminates the
+restriction, and the maximum number of files you can have open for writing is
+then limited only by the operating system. In reality, you usually so not need
+to worry about it any more.
+
+The fact that \LaTeX{} always opens a new file for writing every table of
+contents, list of figures, list of tables, etc. has another disadvantage. Such
+lists are not only output by their respective commands, they also could not be
+output a second time because the associated auxiliary file\footnote{The term
+  \emph{auxiliary file} here refers not to the main \File{aux} file but to the
+  other internal files used indirectly via the \File{aux} file, e.\,g. the
+  \File{toc} file, the \File{lof} file, or the \File{lot} file.} is empty
+after the respective command until the end of the document.
+
+The \Package{scrwfile} package makes a fundamental change to the \LaTeX{}
+kernel, which can solve both problems not only for \mbox{\LuaLaTeX} but also
+for \mbox{pdf\LaTeX} or \XeLaTeX.
+
+\section{Fundamental Changes to the \LaTeX{} Kernel}
+\seclabel{kernelpatches}
+
+\LaTeX{} classes use the \LaTeX{} kernel command
+\Macro{@starttoc}\IndexCmd{@starttoc} to allocate a new file handle, such as
+for \Macro{tableofcontents} or \Macro{listoffigures}. This command not only
+loads the associated auxiliary file but also reopens it for writing. If
+entries to these lists are added using \Macro{addcontentsline}, however, the
+system does not write directly to these auxiliary files. Instead, \LaTeX{}
+writes \Macro{@writefile}\IndexCmd{@writefile} commands to the \File{aux}
+file. Only while reading the \File{aux} file at the end of the document do
+those \Macro{@writefile} commands become actual write operations in the
+auxiliary files. Additionally, \LaTeX{} does not close the auxiliary files
+explicitly. Instead it relies on \TeX{} to close all open files at the end.
+
+This procedure ensures that the auxiliary files are only written to within
+\Macro{end}\PParameter{document}, but they remain open throughout the entire
+\LaTeX{} run. \Package{scrwfile} takes is starting point here, by redefining
+\Macro{@starttoc} and \Macro{@writefile}.
+
+Of course\textnote{Attention!} changes to the \LaTeX{} kernel always have the
+potential to cause incompatibilities with other packages. Those primarily
+affected may be those which also redefine \Macro{@starttoc} or
+\Macro{@writefile}. In some cases, it may help to change the order the
+packages are loaded. If you encounter such a problem, please contact the
+\KOMAScript{} author.
+
+\section{The Single-File Method}
+\seclabel{singlefilefeature}
+
+As soon as the package is loaded with
+\begin{lstcode}
+  \usepackage{scrwfile}
+\end{lstcode}
+\Package{scrwfile} redefines \Macro{@starttoc}\IndexCmd{@starttoc} so that it
+no longer allocates a write handle or opens a file for writing.
+\Macro{@writefile} is redefined so that immediately before closing the
+\File{aux} file in \Macro{end}\PParameter{document}, it writes not to the
+usual auxiliary files but to a single new file with extension \File{wrt}.
+After reading the \File{aux} file, this \File{wrt} file will be processed once
+for each of the auxiliary files that \Macro{@writefile} writes information to.
+However these auxiliary files do not all have to be open at the same time.
+Instead, only one is open at a time and is explicitly closed afterwards. Since
+\LaTeX{} reuses an internal write file, \Package{scrwfile} doesn't need its
+own write handle for this type of table of contents or list of floating
+environments.
+
+Because of this behaviour, even if you have only one table of contents, once
+you load \Package{scrwfile} you will have access to a write file handle for
+bibliographies, indexes, glossaries, and similar lists that do not use
+\Macro{@starttoc}. Additionally, you can create any number of tables of
+contents and other lists that use \Macro{@starttoc}\IndexCmd{@starttoc}.
+
+\section{The File Cloning Method}
+\seclabel{clonefilefeature}
+
+Since \Macro{@writefile}\IndexCmd{@writefile} has already been modified for
+the single-file method described in the previous system so that it no longer
+writes directly to the corresponding auxiliary file, a further possibility
+suggests itself. When copying the \Macro{@writefile} statements into the
+\File{wrt} file, you can also copy them to other destinations. It should be
+explicitly noted that this only works in the document preamble.
+
+%\iffalse^^A
+\begin{Declaration}
+  \Macro{TOCclone}%
+  \OParameter{list heading}\Parameter{source extension}%
+  \Parameter{destination extension}
+\end{Declaration}
+%\fi^^A
+% \medskip
+% \noindent\DescribeCommand{\TOCclone}\hspace*{-\marginparsep}^^A
+% \oarg{list heading}\marg{source extension}\marg{destination extension}^^A
+% \hfil\\
+%\iffalse^^A
+%\fi^^A
+This cloning of file entries copies entire tables of contents or other lists.
+For this, you only need to specify the extension of the auxiliary file whose
+entries should be copied and the extension of a destination file. The entries
+are then copied there. Of course, you can also write additional entries to
+this cloned file.
+
+You can manage the \PName{destination extention} using
+\hyperref[cha:tocbasic]{\Package{tocbasic}}%
+\important{\hyperref[cha:tocbasic]{\Package{tocbasic}}}%^^A
+%\iffalse^^A
+\ (see \autoref{cha:tocbasic})%
+%\fi^^A
+\unskip. If such a file is already under the control of
+\hyperref[cha:tocbasic]{\Package{tocbasic}}, a warning will be issued.
+Otherwise, a new list for this extension will be created using
+\hyperref[cha:tocbasic]{\Package{tocbasic}}. You can set the heading for this
+list with the optional argument \PName{list heading}.
+
+% \DescribeCommand[noindex]{\listof\meta{destination extension}}^^A
+% \SpecialCommandIndex{\listof...}^^A
+You can then output this new content list, for example, with the command
+\Macro{listof\PName{destination extension}}. The content-list
+attributes\important{\hyperref[cha:tocbasic]{\Package{tocbasic}}}
+\PValue{leveldown}, \PValue{numbered}, \PValue{onecolumn}, and \PValue{totoc}
+%\iffalse
+(see \DescRef{tocbasic.cmd.setuptoc} in \autoref{sec:tocbasic.toc},
+\DescPageRef{tocbasic.cmd.setuptoc})
+%\fi
+% (see \cs{setuptoc} in the \pkg{tocbasic} chapter of the \KOMAScript{}
+% manual)
+are automatically copied to the destination list if they were already set in
+the source list. The \PValue{nobabel} attribute is always set for cloned
+content lists, because the language-selection commands in the source content
+list are already copied anyway.
+
+\begin{Example}
+  Suppose you want a short table of contents with only the chapter level in
+  addition to the normal the table of contents:
+\begin{lstcode}
+  \usepackage{scrwfile}
+  \TOCclone[Summary Contents]{toc}{stoc}
+\end{lstcode}
+  This creates a new table of contents with the heading ``Summary Contents''.
+  The new table of contents uses an auxiliary file with the extension
+  \File{stoc}. All entries to the auxiliary file with extension \File{toc}
+  will also be copied to this new auxiliary file.
+
+  In order to have the new short table of contents display only the chapter
+  entries, we use:
+\begin{lstcode}
+  \addtocontents{stoc}{\protect\value{tocdepth}=0}
+\end{lstcode}
+  Although\textnote{Attention!} normally you cannot write to an auxiliary file
+  before \Macro{begin}\PParameter{document}, the code above works in the
+  preamble after loading \Package{scrwfile}. Owing to the unconventional way
+  of changing the
+%\iffalse^^A
+\DescRef{maincls.counter.tocdepth}
+%\fi^^A
+% \cnt{tocdepth}
+  counter within the TOC file, this change only applies to this content list.
+
+  Later in the document, we then output the content list with the file
+  extension \File{stoc} with:
+\begin{lstcode}[moretexcs={listofstoc}]
+  \listofstoc
+\end{lstcode}
+  and this shows only the parts and chapters of the document.
+
+  Things become a bit more difficult if the summary contents are to be
+  listed in the table of contents. This would seem to be possible with
+\begin{lstcode}
+  \addtocontents{toc}{%
+    \protect\addxcontentsline
+      {stoc}{chapter}{\protect\contentsname}%
+  }
+\end{lstcode}
+However, since all entries in \File{toc} are also copied to \File{stoc}, this
+entry would also be copied from the summary contents. So we cannot generate
+the entry from the content list. Because we use the
+\Package{tocbasic}\important{\Package{tocbasic}} package, we can use the
+following:
+%\iffalse^^A
+\phantomsection\xmpllabel{cmd.BeforeStartingTOC}
+%\fi^^A
+\begin{lstcode}
+  \BeforeStartingTOC[toc]{%
+    \addcontentslinedefault{stoc}{chapter}
+                    {\protect\contentsname}%
+  }
+\end{lstcode}
+Of course, this assumes that the \File{toc} file is under the control
+of the \Package{tocbasic} package, which is indeed the case for all
+\KOMAScript{} classes.  See
+%\iffalse^^A
+\autoref{sec:tocbasic.toc} on\DescPageRef{tocbasic.cmd.BeforeStartingTOC}
+for more information about \DescRef{tocbasic.cmd.BeforeStartingTOC}.%
+%\fi^^A
+% the \pkg{tocbasic} chapter of the \KOMAScript{} manual for more
+% information about \cs{BeforeStartingTOC}.^^A
+\end{Example}
+Incidentally, the
+%\iffalse^^A
+\DescRef{tocbasic.cmd.addxcontentsline}
+%\fi^^A
+% \cs{addxcontentsline}
+command used in the examples is also documented in
+%\iffalse^^A
+\autoref{cha:tocbasic}, \DescPageRef{tocbasic.cmd.addxcontentsline}.%
+%\fi^^A
+% the \pkg{tocbasic} chapter of the \KOMAScript{} manual.%^^A
+%\iffalse^^A
+\EndIndexGroup
+\ExampleEndFix
+%\fi^^A
+
+
+\section{Note on the State of Development}
+\seclabel{draft}
+
+Although this package has already been tested by many users and is often in
+production use, its development is still ongoing. Therefore, it is
+theoretically possible that there might be changes, especially to the internal
+functionality. It is likely that the package will be extended in the future.
+Some code for such extensions is already in the package. However, as there are
+no user commands that make use of these features, they are currently
+undocumented.
+
+\section{Known Package Incompatibilities}
+\seclabel{incompatible}
+
+As mentioned in
+%\iffalse^^A
+\autoref{sec:scrwfile.kernelpatches},
+%\fi^^A
+% \autoref{sec-\languagename:scrwfile.kernelpatches}
+\Package{scrwfile} redefines some commands of the \LaTeX{} kernel. This
+happens not only while loading the package, but indeed at various times while
+the document is processed, for example just before reading the \File{aux}
+file.  This\textnote{Attention!} results in incompatibility with packages that
+also redefine these commands at run time.
+
+The \Package{titletoc}%^^A
+%\iffalse^^A
+\important{Package{titletoc}}\IndexPackage{titletoc}
+%\fi^^A
+package is an example for such an incompatibility. That package redefines
+\Macro{@writefile} under some conditions at run time. If you use both
+\Package{scrwfile} and \Package{titletoc}, there is no warranty for the
+correct behaviour of either one. This is neither an error of
+\Package{titletoc} nor of \Package{scrwfile}.%
+%\iffalse^^A
+%</docen>
+%\fi^^A
+%
+% \selectlanguage{ngerman}
+% \part{Deutsche Benutzeranleitung}
+%
+% \noindent\textbf{Dies ist ein experimentelles Paket. Die Verwendung dieses
+%   Pakets erfolgt auf eigene Gefahr. Es gibt keine Unterstützung, wenn Sie
+%   dieses Paket verwenden. Das gilt nicht nur für dieses Paket, sondern auch
+%   für die Klasse, die Sie verwenden, oder andere Pakete, die \cs{@starttoc}
+%   oder \cs{@writefile} verwenden, beispielsweise \pkg{caption}, \pkg{float},
+%   \pkg{tocbasic}, \pkg{listings} und viele weitere.}
+%
+% \section{Hintergrund}
+%\iffalse
+%<*docde>
+%\fi
+%
+Eines der Probleme, die auch durch die Einführung von \eTeX{} nicht gelöst
+wurden, ist die Tatsache, dass \TeX{} nur 18 Dateien gleichzeitig zum Schreiben
+geöffnet haben kann. Diese Zahl erscheint zunächst recht groß. Allerdings ist
+zu berücksichtigen, dass bereits \LaTeX{} selbst einige dieser Dateien
+belegt. Inhaltsverzeichnis, Tabellenverzeichnis, Abbildungsverzeichnis, Index,
+Glossar und jedes weitere Verzeichnis, das von \LaTeX{} aus erzeugt wird,
+belegt in der Regel eine weitere Datei. Dazu kommen Hilfsdateien von Paketen
+wie \Package{hyperref} oder \Package{minitoc}.
+
+Im Endeffekt kann es daher geschehen, dass irgendwann die Meldung
+\begin{lstoutput}
+  ! No room for a new \write .
+  \ch@ck ...\else \errmessage {No room for a new #3}
+                                                    \fi 
+\end{lstoutput}
+erscheint. Seit einiger Zeit ist die einfachste Lösung dieses Problems die
+Verwendung von \LuaLaTeX{} anstelle von PDF\LaTeX{} oder \XeLaTeX. Damit
+entfällt die Beschränkung und die maximale Anzahl der gleichzeitig zum
+Schreiben geöffneten Dateien wird nur noch durch das Betriebssystem
+bestimmt. In der Realität braucht man sich darüber dann normalerweise keine
+Gedanken mehr zu machen.
+
+Dass \LaTeX{} bei Verzeichnissen wie dem Inhaltsverzeichnis, dem
+Tabellenverzeichnis und dem Abbildungsverzeichnis immer sofort eine neue Datei
+zum Schreiben öffnet, hat aber auch noch einen weiteren Nachteil. Solche
+Verzeichnisse werden durch deren Befehle nicht nur direkt gesetzt, sie können
+auch kein weiteres Mal gesetzt werden, da die zugehörige Hilfsdatei nach dem
+jeweiligen Befehl bis zum Ende des Dokuments leer ist.
+
+Das Paket \Package{scrwfile} bietet hier eine grundsätzliche Änderung im
+\LaTeX-Kern, durch die beide Probleme nicht nur für \LuaLaTeX{} sondern auch
+bei Verwendung von PDF\LaTeX{} oder \XeLaTeX{} gelöst werden können.
+
+
+\section{Grundsätzliche Änderungen am \LaTeX-Kern}
+\seclabel{kernelpatches}
+
+\LaTeX-Klassen verwenden zum Öffnen eines Verzeichnisses, beispielsweise mit
+\Macro{tableofcontents} oder \Macro{listoffigures}, die \LaTeX-Kern-Anweisung
+\Macro{@starttoc}\IndexCmd{@starttoc}. \LaTeX{} selbst lädt bei dieser
+Anweisung nicht nur die zugehörige Hilfsdatei, sondern öffnet diese Hilfsdatei
+auch neu zum Schreiben. Werden anschließend mit \Macro{addtocontents} oder
+\Macro{addcontentsline} Einträge in dieses Verzeichnis vorgenommen, so wird
+jedoch nicht direkt in die geöffnete Hilfsdatei geschrieben. Stattdessen
+schreibt \LaTeX{} \Macro{@writefile}-Anweisungen\IndexCmd{@writefile} in die
+\File{aux}-Datei. Erst beim Einlesen der \File{aux}-Dateien am Ende des
+Dokuments wird dann über diese \Macro{@writefile}-Anweisungen in die
+tatsächlichen Hilfsdateien geschrieben. Die Hilfsdateien werden von \LaTeX{}
+auch nicht explizit geschlossen. Stattdessen verlässt sich \LaTeX{} hier
+darauf, dass \TeX{} die Dateien am Ende ohnehin schließt.
+
+Dieses Vorgehen sorgt dafür, dass die Hilfsdateien zwar erst innerhalb von
+\Macro{end}\PParameter{document} tatsächlich beschrieben werden, aber trotzdem
+während des gesamten \LaTeX-Laufs gleichzeitig offen sind. \Package{scrwfile}
+hat nun genau hier einen Ansatzpunkt: die Umdefinierung von \Macro{@starttoc}
+und \Macro{@writefile}.
+
+Natürlich\textnote{Achtung!} besitzen Änderungen am \LaTeX-Kern immer das
+Potential, dass es zu Unverträglichkeiten mit anderen Paketen kommen
+kann. Betroffen können in erster Linie Pakete sein, die ebenfalls
+\Macro{@starttoc} oder \Macro{@writefile} umdefinieren. In einigen Fällen kann
+es helfen, die Reihenfolge der Pakete zu ändern.%
+\iffalse % Umbruchkorrektur
+\ Wenn Sie auf ein solches Problem stoßen, sollten Sie sich an den
+\KOMAScript-Autor wenden.5
+\fi
+
+\section{Das Eindateiensystem}
+\seclabel{singlefilefeature}
+
+Bereits beim Laden des Pakets mit
+% Umbruchoptimierung: listings
+\begin{lstcode}
+  \usepackage{scrwfile}
+\end{lstcode}
+wird \Macro{@starttoc}\IndexCmd{@starttoc} von \Package{scrwfile} so
+umdefiniert, dass davon selbst keine Datei mehr zum Schreiben angefordert und
+geöffnet wird. Unmittelbar vor dem Schließen der \File{aux}-Datei in
+\Macro{end}\PParameter{document} wird dann \Macro{@writefile} so umdefiniert,
+dass diese Anweisung statt in die eigentlichen Hilfsdateien in eine neue
+Hilfsdatei mit der Endung \File{wrt} schreibt. Nach dem Einlesen der
+\File{aux}-Dateien wird schließlich die \File{wrt}-Datei abgearbeitet und zwar
+ein Mal für jede der Hilfsdateien, in die mit \Macro{@writefile} geschrieben
+wird. Dabei muss aber nicht jede dieser Hilfsdateien gleichzeitig
+geöffnet sein. Stattdessen ist immer nur eine zum Schreiben geöffnet und wird
+auch wieder explizit geschlossen. Da dabei eine interne Schreibdatei von
+\LaTeX{} wiederverwendet wird, benötigt \Package{scrwfile} keine einzige
+eigene Schreibdatei für diese Art von Verzeichnissen.
+
+Selbst wenn bisher nur mit einem Inhaltsverzeichnis gearbeitet wird, steht
+nach dem Laden des Pakets bereits eine Schreibdatei mehr für
+Literaturverzeichnisse, Stichwortverzeichnisse, Glossare und ähnliche
+Verzeichnisse, die nicht mit \Macro{@starttoc} arbeiten, zur
+Verfügung. Darüber hinaus können beliebig viele Verzeichnisse, die mit
+\Macro{@starttoc}\IndexCmd{@starttoc} arbeiten, angelegt werden.
+
+
+\section{Das Klonen von Dateieinträgen}
+\seclabel{clonefilefeature}
+
+Nachdem \Macro{@writefile}\IndexCmd{@writefile} für das Eindateiensystem aus
+dem vorherigen Abschnitt bereits so geändert wurde, dass es nicht direkt in
+die entsprechende Hilfsdatei schreibt, lag eine weitere Idee nahe. Beim
+Kopieren der \Macro{@writefile}-Anweisungen in die \File{wrt}-Datei können
+diese auch für andere Zielendungen übernommen werden. Es sei ausdrücklich
+darauf hingewiesen, dass dies nur in der Dokumentpräambel funktioniert.
+
+%\iffalse^^A
+\begin{Declaration}
+  \Macro{TOCclone}\OParameter{Verzeichnisüberschrift}
+                  \Parameter{Quellendung}\Parameter{Zielendung}
+  \Macro{listof\PName{Zielendung}}
+\end{Declaration}%
+%\fi^^A
+% \medskip
+% \noindent\DescribeCommand{\TOCclone}\hspace*{-\marginparsep}^^A
+% \oarg{Verzeichnisüberschrift}\marg{Quellendung}\marg{Zielendung}^^A
+% \hfill\\
+Durch dieses Klonen von Dateieinträgen werden so ganze Verzeichnisse
+geklont. Dazu muss man nur die Endung der Hilfsdatei des Verzeichnisses
+kennen, dessen Einträge kopiert werden sollen. Zusätzlich muss man die Endung
+einer Zieldatei angeben. In diese werden die Einträge dann kopiert. Natürlich
+kann man in dieses geklonte Verzeichnis auch zusätzliche Einträge
+schreiben.
+
+Die \PName{Zielendung} der Zieldatei wird mit Hilfe von
+\hyperref[cha:tocbasic]{\Package{tocbasic}}%
+\important{\hyperref[cha:tocbasic]{\Package{tocbasic}}}
+%\iffalse^^A
+(siehe \autoref{cha:tocbasic})
+%\fi^^A
+verwaltet. Steht eine solche Datei bereits unter
+Kontrolle von \hyperref[cha:tocbasic]{\Package{tocbasic}} wird eine Warnung
+ausgegeben. Anderenfalls wird mit Hilfe von
+\hyperref[cha:tocbasic]{\Package{tocbasic}} ein neues Verzeichnis für diese
+Endung angelegt. Die Überschrift des neuen Verzeichnisses kann man über das
+optionale Argument \PName{Verzeichnisüberschrift} bestimmen.
+
+% \DescribeCommand[noindex]{\listof\meta{Zielendung}}^^A
+% \SpecialCommandIndex{\listof...}^^A
+Ausgeben kann man dieses neue Verzeichnis dann beispielsweise über die
+Anweisung \Macro{listof\PName{Zielendung}}. Die
+Verzeichniseigenschaften\important{\hyperref[cha:tocbasic]{\Package{tocbasic}}}
+\PValue{leveldown}, \PValue{numbered}, \PValue{onecolumn} und \PValue{totoc}
+%\iffalse
+(siehe Anweisung \DescRef{tocbasic.cmd.setuptoc} in
+\autoref{sec:tocbasic.toc}, \DescPageRef{tocbasic.cmd.setuptoc})
+%\fi
+% (siehe \cs{setuptoc} im Kapitel to \pkg{tocbasic} in the \KOMAScript-Anleitung)
+werden automatisch in das Zielverzeichnis übernommen, falls sie für das
+Quellverzeichnis bereits gesetzt waren. Die Eigenschaft \PValue{nobabel} wird
+für geklonte Verzeichnisse immer gesetzt, da die entsprechenden
+\Package{babel}-Einträge in das Quellverzeichnis ohnehin bereits kopiert
+werden.
+
+\begin{Example}
+  Angenommen, Sie wollen zusätzlich zum normalen Inhaltsverzeichnis eine
+  Gliederungsübersicht, in der nur die Kapitel angezeigt werden.
+\begin{lstcode}
+  \usepackage{scrwfile}
+  \TOCclone[Gliederungsübersicht]{toc}{stoc}
+\end{lstcode}
+  Hierdurch wird zunächst ein neues Verzeichnis mit der Überschrift
+  »Gliederungsübersicht« angelegt. Das neue Verzeichnis verwendet die
+  Dateiendung \File{stoc}. Alle Einträge in die Datei mit der Endung
+  \File{toc} werden auch in dieses Verzeichnis kopiert.
+
+  Damit dieses neue Verzeichnis nun nur die Kapitelebene ausgibt, verwenden
+  wir: 
+\begin{lstcode}
+  \addtocontents{stoc}{\protect\value{tocdepth}=0}
+\end{lstcode}
+  Während\textnote{Achtung!} normalerweise erst ab
+  \Macro{begin}\PParameter{document} Einträge in ein Verzeichnis vorgenommen
+  werden können, funktioniert dies nach Laden von \Package{scrwfile} bereits
+  in der Dokumentpräambel. Durch die hier gezeigte unkonventionelle Art, den
+  Zähler
+%\iffalse^^A
+\DescRef{maincls.counter.tocdepth}
+%\fi^^A
+% \cnt{tocdepth}
+  innerhalb der Verzeichnisdatei zu ändern, bleibt diese Änderung nur für
+  dieses Verzeichnis wirksam.
+
+  Später im Dokument wird das Verzeichnis mit der Endung \File{stoc} dann
+  durch
+\begin{lstcode}[moretexcs={listofstoc}]
+  \listofstoc
+\end{lstcode}
+  ausgegeben und zeigt nur die Teile und Kapitel des Dokuments.
+
+  Etwas schwieriger wird es, wenn das Inhaltsverzeichnis in der
+  Gliederungsübersicht angezeigt werden soll. Dies wäre zwar mit
+\begin{lstcode}
+  \addtocontents{toc}{%
+    \protect\addxcontentsline
+      {stoc}{chapter}{\protect\contentsname}%
+  }
+\end{lstcode}
+  möglich. Da jedoch alle Einträge in \File{toc} auch nach \File{stoc} kopiert
+  werden, würde so von der Gliederungsübersicht dieser Eintrag ebenfalls
+  übernommen. Also darf der Eintrag nicht aus der Verzeichnisdatei heraus
+  erzeugt werden. Da das Paket \hyperref[cha:tocbasic]{\Package{tocbasic}}%
+  \important{\hyperref[cha:tocbasic]{\Package{tocbasic}}} zum Einsatz kommt,
+  kann aber%^^A
+%\iffalse^^A
+  \phantomsection\xmpllabel{cmd.BeforeStartingTOC}%
+%\fi^^A
+\begin{lstcode}
+  \BeforeStartingTOC[toc]{%
+    \addxcontentsline{stoc}{chapter}
+                     {\protect\contentsname}}
+\end{lstcode}
+  verwendet werden. Natürlich\textnote{Achtung!} setzt dies voraus, dass die
+  Datei mit Endung \File{toc} auch unter der Kontrolle von
+  \hyperref[cha:tocbasic]{\Package{tocbasic}} steht. Dies ist bei allen
+  \KOMAScript-Klassen der Fall. Näheres zur Anweisung
+%\iffalse^^A
+  \DescRef{tocbasic.cmd.BeforeStartingTOC} ist in \autoref{sec:tocbasic.toc}
+  auf \DescPageRef{tocbasic.cmd.BeforeStartingTOC}
+%\fi^^A
+% \cs{BeforeStartingTOC} im Kapitel zu \pkg{tocbasic} in der
+% \KOMAScript-Anleitung
+  zu finden. Die Erklärung zu
+%\iffalse^^A
+  \DescRef{tocbasic.cmd.addxcontentsline} findet sich in demselben Abschnitt
+  auf \DescPageRef{tocbasic.cmd.addxcontentsline}.%
+%\fi^^A
+% \cs{addxcontentsline} findet sich dort ebenfalls.%^^A
+\end{Example}%
+%\iffalse^^A
+\EndIndexGroup%
+\ExampleEndFix
+%\fi^^A
+
+
+\section{Hinweis zum Entwicklungsstand}
+\seclabel{draft}
+
+Obwohl das Paket bereits von mehreren Anwendern getestet wurde und vielfach im
+Einsatz ist, ist es vom Autor als experimentell eingestuft. Deshalb ist es
+theoretisch möglich, dass insbesondere an der internen Funktionsweise des
+Pakets noch Änderungen vorgenommen werden. Teilweise befindet sich auch Code
+für zusätzliche Erweiterungen im Paket. Da jedoch keine Benutzeranweisungen
+existieren, mit denen diese Möglichkeiten genutzt werden könnten, wurde auf
+eine Dokumentation derselben verzichtet.
+
+
+\section{Bekannte Paketunverträglichkeiten}
+\seclabel{incompatible}
+
+Wie in
+%\iffalse^^A
+\autoref{sec:scrwfile.kernelpatches}
+% \fi^^A
+% \autoref{sec-\languagename:scrwfile.kernelpatches}
+bereits erwähnt, muss \Package{scrwfile} einige wenige Anweisungen des
+\LaTeX-Kerns umdefinieren. Dies geschieht nicht allein während des Ladens des
+Pakets, sondern vielmehr zu verschiedenen Zeitpunkten während der Abarbeitung
+eines Dokuments, beispielsweise vor dem Einlesen der
+\File{aux}-Datei. Das\textnote{Achtung!} führt dazu, dass \Package{scrwfile}
+sich nicht mit anderen Paketen verträgt, die dieselben Anweisungen ebenfalls
+zur Laufzeit umdefinieren.
+
+Ein Beispiel für eine solche Unverträglichkeit ist
+\Package{titletoc}%^^A
+%\iffalse^^A
+\important{\Package{titletoc}}\IndexPackage{titletoc}%^^A
+%\fi^^A
+\unskip. Das Paket definiert unter gewissen Umständen \Macro{@writefile} zur
+Laufzeit um. Werden \Package{scrwfile} und \Package{titletoc} zusammen
+verwendet, ist die Funktion beider Paket nicht mehr gewährleistet. Dies ist
+weder ein Fehler in \Package{titletoc} noch in \Package{scrwfile}.%
+%\iffalse^^A
+%</docde>
+%\fi^^A
+%
+% \selectlanguage{USenglish}
+%
+% \MaybeStop{\PrintIndex}
+%
+% \part{Implementation of \pkg{scrwfile}}
+%
+%    \begin{macrocode}
+%<*package>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\PackageWarningNoLine{scrwfile}{%
+  THIS IS AN EXPERIMENTAL PACKAGE!\MessageBreak
+  USAGE OF THIS PACKAGE IS ON YOUR OWN RISK!\MessageBreak
+  EVERYTHING MAY HAPPEN!\MessageBreak
+  EVERYTHING MAY CHANGE IN FUTURE!\MessageBreak
+  THERE IS NO SUPPORT, IF YOU USE THIS PACKAGE!\MessageBreak
+  Maybe, it would be better not to load this package%
+}
+%    \end{macrocode}
+%
+% \section{Options}
+% Currently we don't need options.
+%
+% \section{Body}
+%
+% \subsection{Needed Packages}
+%
+% Package \pkg*{scrbase} is needed, because of using several \KOMAScript{}
+% basic commands.
+% \changes{v0.1.12}{2023/03/31}{required version of \pkg{scrbase} fixed}
+%    \begin{macrocode}
+\RequirePackage{scrbase}[2015/08/29]
+%    \end{macrocode}
+%
+% Package \pkg*{scrlfile} is needed because of the \file{aux}-file
+% handling and \cs{protected@immediate@write}.
+%    \begin{macrocode}
+\RequirePackage{scrlfile}[2010/09/30]
+%    \end{macrocode}
+%
+% \changes{v0.1.10}{2022/02/04}{\pkg{iftex} is required}
+% Package \pkg{iftex} is used to detect Lua\LaTeX.
+%    \begin{macrocode}
+\RequirePackage{iftex}
+%    \end{macrocode}
+%
+% \subsection{Is is needed?}
+%
+% \changes{v0.1.9}{2021/05/30}{with Lua\LaTeX{} using is not recommended}
+% \changes{v0.1.10}{2022/02/04}{using \cs{ifluatex}}
+% \changes{v0.1.10}{2022/02/04}{\cs{PackageInfoNoLine} replaced by
+% \cs{PackageWarningNoLine}}
+% If the user uses Lua\LaTeX{} usage of \pkg*{scrwfile} should not be
+% needed.
+%    \begin{macrocode}
+\ifluatex
+  \PackageWarningNoLine{scrwfile}{LuaLaTeX detected.\MessageBreak
+    With LuaLaTeX you should never get an error message:\MessageBreak
+    \space\space`No room for a new \string\write'.\MessageBreak
+    So scrwfile could make much more harm than benefit\MessageBreak
+    and using it is not recommended}%
+\fi
+%    \end{macrocode}
+%
+% \subsection{\LaTeX{} Kernel Patchs}
+%
+% For some features we need to patch \LaTeX{} kernel macros. Those features
+% and macros are:
+% \begin{description}
+% \item[Single handle feature] means, that \LaTeX{} will no longer need a file
+%   handle for every help file, but only one for all files. We will patch
+%  \cs{@starttoc} and \cs{@writefile} to do so.
+% \item[Clone file feature] means, that every write to one file may be done to
+%   another file, too. We will patch \cs{@writefile} to do so.
+% \end{description}
+% Every patch should be minimum invasive, so that files, that are not under
+% \pkg*{scrwfile}'s control are changed as little as possible.
+%
+% \begin{macro}{\scrwfile@if@only}
+% First of all we check, if the file should be handled by \pkg*{scrwfile}.
+%    \begin{macrocode}
+\newcommand*{\scrwfile@if@only}[1]{%
+  \begingroup
+    \scr@ifundefinedorrelax{scrwfile@only}{\@tempswatrue}{%
+      \@tempswafalse
+      \edef\reserved@b{#1}%
+      \@for\reserved@a:=\scrwfile@only\do
+        {\ifx\reserved@a\reserved@b\@tempswatrue\fi}%
+    }%
+    \if@tempswa
+      \scr@ifundefinedorrelax{scrwfile@never}{}{%
+        \edef\reserved@b{#1}%
+        \@for\reserved@a:=\scrwfile@never\do
+          {\ifx\reserved@a\reserved@b\@tempswafalse\fi}%
+      }%
+    \fi
+  \expandafter\endgroup
+  \if@tempswa
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\scrwfile@starttoc,\scrwfile@@starttoc}
+% This is the internal redefinition of \cs{@starttoc}. First of all test, if it
+% should be used, then use it or not.
+%    \begin{macrocode}
+\newcommand*{\scrwfile@starttoc}[1]{%
+  \scrwfile@if@only{#1}{\scrwfile@@starttoc}{\scrwfile@saved@starttoc}{#1}%
+}
+\newcommand*{\scrwfile@@starttoc}[1]{%
+%<trace>  \PackageInfo{scrwfile}{%
+%<trace>    Using my own \string\@starttoc\space for `#1'}%
+  \begingroup
+    \if@filesw
+      \xdef\scrwfile@writefilelist{\scrwfile@writefilelist,#1}%
+    \fi
+    \@fileswfalse
+    \scrwfile@saved@starttoc{#1}%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\scrwfile@writefile,\scrwfile@@writefile,\scrwfile@wrtout,
+%               \scrwfile@writefilelist}
+% This is the internal redefinition of \cs{@writefile}. First of all test, if
+% it should be used, then use it or not.
+%    \begin{macrocode}
+\newcommand*{\scrwfile@writefile}[1]{%
+  \scrwfile@if@only{#1}{\scrwfile@@writefile}{\scrwfile@saved@writefile}{#1}%
+}
+\newcommand{\scrwfile@@writefile}[2]{%
+%<trace>  \PackageInfo{scrwfile}{%
+%<trace>    Using my own \string\@writefile\space for `#1'}%
+  \ifnum\scrwfile@wrtout>0
+    \begingroup
+      \@temptokena{#2}%
+      \immediate\write\scrwfile@wrtout{%
+        \string\@writefile{#1}{\the\@temptokena}%
+      }%
+%    \end{macrocode}
+% This was the entry for the real file. But we also may have clone files:
+%    \begin{macrocode}
+      \scrwfile@process@clones{#1}%
+    \endgroup
+  \fi
+}
+\chardef\scrwfile@wrtout\z@
+\newcommand*{\scrwfile@writefilelist}{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@writefile,\scrwfile@saved@writefile}
+% We have to add the single handle feature and the clone file feature to
+% \cs{@writefile} and therefore save the original
+% definition. \cs{scrwfile@saved@writefile} is used, whenever a file is not
+% under \pkg*{scrwfile}'s control.
+%    \begin{macrocode}
+\newcommand*{\scrwfile@saved@writefile}{}
+\BeforeClosingMainAux{%
+  \ifx\scrwfile@writefilelist\@empty\else
+    \let\scrwfile@saved@writefile\@writefile
+    \let\scrwfile@wrtout\@partaux
+    \immediate\openout\scrwfile@wrtout \jobname.wrt
+    \let\@writefile\scrwfile@writefile
+  \fi
+}
+\AfterReadingMainAux{%
+  \ifx\scrwfile@writefilelist\@empty\else
+    \immediate\closeout\scrwfile@wrtout
+    \chardef\scrwfile@wrtout\z@
+    \begingroup
+      \let\@writefile\scrwfile@saved@writefile
+      \@for\@currext:=\scrwfile@writefilelist\do{%
+        \begingroup
+          \ifx\@currext\@empty\else
+            \scr@ifundefinedorrelax{tf@\@currext}{%
+%<trace>              \typeout{Process extension: `\@currext'}
+              \immediate\openout\@partaux \jobname.\@currext
+              \expandafter\let\csname tf@\@currext\endcsname\@partaux
+              \@input@{\jobname.wrt}%
+              \immediate\closeout\@partaux
+            }{}%
+          \fi
+        \endgroup
+      }%
+    \endgroup
+  \fi
+}
+%    \end{macrocode}
+% \changes{v0.1.8}{2021/05/30}{added order rule for
+%   \pkg*{scrlayer-notecolumn}}
+% Note: Here we use a \LaTeX{} version test, because a do-nothing-definition
+% like the one of \pkg{latexrelease} wouldn't be correct, if the command is
+% not supported by the current \LaTeX{} kernel version setting.
+%    \begin{macrocode}
+\IfLTXAtLeastTF{2020/10/01}{%
+  \DeclareHookRule{enddocument/afteraux}%
+                  {scrwfile}{before}{scrlayer-notecolumn}%
+}{%
+  \@ifpackageloaded{scrlayer-notecolumn}{%
+    \PackageWarningNoLine{scrwfile}{%
+      Dangerous package order detected!\MessageBreak
+      As a general rule, you should load scrwfile as soon\MessageBreak
+      as possible, maybe even before `\string\documentclass'\MessageBreak
+      (using `\string\RequirePackage' instead of
+      `\string\usepackage').\MessageBreak
+      Following packages should be loaded after scrwfile:\MessageBreak
+      \space - scrlayer-notecolumn}%
+  }{}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@starttoc,\scrwfile@saved@starttoc}
+% We have to add the single handle feature to \cs{@starttoc} and therefore
+% save the original definition.
+% \changes{v0.1.5}{2013/07/24}{take care for outdated \pkg{hyperref}}
+% \changes{v0.1.11}{2022/10/06}{ready for \pkg{hyperref} without
+%   \cs{Hy@AtBeginDocumentHook}}
+% \cs{scrwfile@saved@starttoc} is be used, whenever the file is not under
+% \pkg*{scrwfile}'s control. Because of old versions of package
+% \pkg{hyperref}, that do a hard redefinition without any care for changed
+% definitions, we have to take care for that and cannot do a simple
+% \begin{verbatim}
+% \let\scrwfile@saved@starttoc\@starttoc
+% \let\@starttoc\scrwfile@starttoc
+% \end{verbatim}
+%    \begin{macrocode}
+\newcommand*{\scrwfile@saved@starttoc}{}
+\AtBeginDocument{%
+  \begingroup
+    \@ifpackageloaded{hyperref}{%
+      \scr@ifundefinedorrelax{Hy@AtBeginDocument}{%
+        \PackageInfo{scrwfile}{%
+          Using immediate redefinition of `\string\@starttoc'%
+        }%
+        \aftergroup\@firstofone
+      }{%
+        \ifx\Hy@AtBeginDocumentHook\@undefined
+          \PackageInfo{scrwfile}{%
+            Using immediate redefinition of `\string\@starttoc'%
+          }%
+          \aftergroup\@firstofone
+        \else
+%    \end{macrocode}
+% From v7.00o \pkg{hyperref} does not redefine \cs{@starttoc} any more. So we
+% do need the usage of \cs{Hy@AtBeginDocument} only for versions before.
+%    \begin{macrocode}
+          \@ifpackagelater{hyperref}{2022/02/22}{% newer than v7.00n
+            \PackageInfo{scrwfile}{%
+              Using immediate redefinition of `\string\@starttoc'%
+            }%
+            \aftergroup\@firstofone
+          }{%
+            \PackageWarning{scrwfile}{%
+              Outdated package `hyperref' detected.\MessageBreak
+              Using `\string\Hy@AtBeginDocument' for redefinition of
+              `\string\@starttoc'.\MessageBreak
+              We recommend to update `hyperref'
+            }%
+            \aftergroup\Hy@AtBeginDocument
+          }%
+        \fi
+      }%
+    }{%
+      \PackageInfo{scrwfile}{%
+        Using immediate redefinition of `\string\@starttoc'%
+      }%
+      \aftergroup\@firstofone
+    }%
+  \endgroup
+  {%
+    \PackageInfo{scrwfile}{%
+      Extending `\string\@starttoc`
+    }%
+    \let\scrwfile@saved@starttoc\@starttoc
+    \let\@starttoc\scrwfile@starttoc
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{Clone TOC Feature}
+%
+% \pkg*{scrwfile} may clone a TOC, that means, every entry to one file will
+% be copied to other files, too.  You must not clone recursively!
+%
+% \begin{description}
+% \item[ToDo:]The whole feature should be moved to \pkg*{tocbasic}. But this
+%   would need a complete re-implementation and would result in one more write
+%   handle for every cloned file. So maybe it wouldn't be a really good idea
+%   to do so.
+% \end{description}
+%
+% \begin{macro}{\scrwfile@process@clones}
+%    \begin{macrocode}
+\newcommand*{\scrwfile@process@clones}[1]{%
+  \scr@ifundefinedorrelax{scrwfile@clone@#1}{}{%
+    \begingroup
+      \let\@@protect\protect\let\protect\@empty\afterassignment\restore@protect
+      \edef\reserved@b{\csname scrwfile@clone@#1\endcsname}%
+      \edef\reserved@c{,#1}%
+      \@for \reserved@a:=\reserved@b\do {%
+        \@tempswatrue
+        \@for \reserved@d:=\reserved@c\do {%
+          \ifx\reserved@d\reserved@a\@tempswafalse\fi
+        }%
+        \if@tempswa
+%<trace>          \typeout{clone entry from `#1' to `\reserved@a'}%
+          \immediate\write\scrwfile@wrtout{%
+            \string\@writefile{\reserved@a}{\the\@temptokena}%
+          }%
+          \edef\reserved@c{\reserved@c,\reserved@a}%
+        \fi
+      }%
+    \endgroup
+  }%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{command}{\TOCclone}
+% \changes{v0.1.8}{2019/11/18}{\cs{ifstr} umbenannt in \cs{Ifstr}}
+% \changes{v0.1.8}{2019/11/19}{\cs{ifattoclist} replaced by \cs{Ifattoclist}}
+% \changes{v0.1.8}{2019/11/19}{\cs{iftocfeature} replaced by
+%   \cs{Iftocfeature}}
+% \changes{v0.1.8}{2020/02/25}{spurious space in warning message removed}
+% \changes{v0.1.9}{2021/05/30}{requires package \pkg*{tocbasic}}
+% \changes{v0.1.9}{2021/05/30}{can be used only in preamble}
+% \changes{v0.1.12}{2023/03/31}{using \cs{IfArgIsEmpty} instead of \cs{Ifstr}
+%   with empty argument}
+% Clone the entries from the second (first mandatory) argument TOC to the
+% third (second mandatory) argument TOC.  If the first (optional) argument was
+% given, define |\listof#3name| to this and also define |\listof#3| and clone
+% the toc features \texttt{leveldown}, \texttt{numbered}, \texttt{onecolumn}
+% and \texttt{totoc} of |#2| to |#3|. The toc feature \texttt{nobabel} will
+% always be set, because the babel entries at TOC |#3| will be cloned from TOC
+% |#2|.
+% \begin{description}
+% \item{Note:} We use owner \texttt{TOCclone} for all cloned extensions.
+% \end{description}
+%    \begin{macrocode}
+\newcommand*{\TOCclone}[3][]{%
+  \RequirePackage{tocbasic}%
+  \scr@ifundefinedorrelax{scrwfile@clone@#2}{%
+    \expandafter\protected@edef\csname scrwfile@clone@#2\endcsname{%
+      #3,\protect\csname scrwfile@clone@#3\endcsname
+    }%
+  }{%
+    \edef\reserved@b{\csname scrwfile@clone@#2\endcsname}%
+    \expandafter\protected@edef\csname scrwfile@clone@#2\endcsname{%
+      \csname scrwfile@clone@#2\endcsname,%
+      #3,%
+      \protect\csname scrwfile@clone@#3\endcsname
+    }%
+  }%
+  \scr@ifundefinedorrelax{scrwfile@clone@#3}{%
+    \expandafter\let\csname scrwfile@clone@#3\endcsname\@empty
+  }{}%
+  \Ifattoclist{#3}{%
+    \PackageWarning{scrwfile}{`#3' already under control of
+      tocbasic.\MessageBreak
+      Nevertheless features will be set%
+    }%
+  }{%
+    \addtotoclist[TOCclone]{#3}%
+  }%
+  \setuptoc{#3}{nobabel}%
+  \IfArgIsEmpty{#1}{%
+  }{%
+    \@namedef{listof#3name}{#1}%
+    \@namedef{listof#3}{\listoftoc{#3}}%
+    \Iftocfeature{#2}{leveldown}{\setuptoc{#3}{leveldown}}{}%
+    \Iftocfeature{#2}{numbered}{\setuptoc{#3}{numbered}}{}%
+    \Iftocfeature{#2}{onecolumn}{\setuptoc{#3}{leveldownonecolumn}}{}%  
+    \Iftocfeature{#2}{totoc}{\setuptoc{#3}{totoc}}{}%
+  }%
+}
+\@onlypreamble\TOCClone
+%    \end{macrocode}
+% \end{command}
+%
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+%
+% \Finale
+% \PrintChanges
+%
+% \endinput
+% Local Variables:
+% mode: doctex
+% ispell-local-dictionary: "en_US"
+% eval: (flyspell-mode 1)
+% TeX-master: t
+% TeX-engine: luatex-dev
+% eval: (setcar (or (cl-member "Index" (setq-local TeX-command-list (copy-alist TeX-command-list)) :key #'car :test #'string-equal) (setq-local TeX-command-list (cons nil TeX-command-list))) '("Index" "mkindex %s" TeX-run-index nil t :help "makeindex for dtx"))
+% End:
