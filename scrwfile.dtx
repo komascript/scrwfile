@@ -253,7 +253,7 @@ Instead, only one is open at a time and is explicitly closed afterwards. Since
 own write handle for this type of table of contents or list of floating
 environments.
 
-Because of this behaviour, even if you have only one table of contents, once
+Because of this behavior, even if you have only one table of contents, once
 you load \Package{scrwfile} you will have access to a write file handle for
 bibliographies, indexes, glossaries, and similar lists that do not use
 \Macro{@starttoc}. Additionally, you can create any number of tables of
@@ -342,7 +342,8 @@ list are already copied anyway.
 \DescRef{maincls.counter.tocdepth}
 %\fi^^A
 % \cnt{tocdepth}
-  counter within the TOC file, this change only applies to this content list.
+  counter within the \File{toc} file, this change only applies to this content
+  list.
 
   Later in the document, we then output the content list with the file
   extension \File{stoc} with:
@@ -776,7 +777,7 @@ weder ein Fehler in \Package{titletoc} noch in \Package{scrwfile}.%
 \RequirePackage{iftex}
 %    \end{macrocode}
 %
-% \subsection{Is is needed?}
+% \subsection{Does loading the package make sense?}
 %
 % \changes{v0.1.9}{2021/05/30}{with Lua\LaTeX{} using is not recommended}
 % \changes{v0.1.10}{2022/02/04}{using \cs{ifluatex}}
@@ -794,7 +795,7 @@ weder ein Fehler in \Package{titletoc} noch in \Package{scrwfile}.%
 \fi
 %    \end{macrocode}
 %
-% \subsection{\LaTeX{} Kernel Patchs}
+% \subsection{\LaTeX{} Kernel Patches}
 %
 % For some features we need to patch \LaTeX{} kernel macros. Those features
 % and macros are:
@@ -1058,7 +1059,7 @@ weder ein Fehler in \Package{titletoc} noch in \Package{scrwfile}.%
 % \end{macro}
 %
 % \begin{command}{\TOCclone}
-% \changes{v0.1.8}{2019/11/18}{\cs{ifstr} umbenannt in \cs{Ifstr}}
+% \changes{v0.1.8}{2019/11/18}{\cs{ifstr} renamed to \cs{Ifstr}}
 % \changes{v0.1.8}{2019/11/19}{\cs{ifattoclist} replaced by \cs{Ifattoclist}}
 % \changes{v0.1.8}{2019/11/19}{\cs{iftocfeature} replaced by
 %   \cs{Iftocfeature}}
